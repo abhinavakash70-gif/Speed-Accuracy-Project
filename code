@@ -1,0 +1,69 @@
+import tkinter as tk
+import time
+import random
+
+sentences = [
+    "Hi, welcome to this program.",
+    "Python is a beginner-friendly programming language.",
+    "This program will help you check your typing accuracy.",
+    "Consistency is the key to success.",
+    "Test your typing speed.",
+    "Developed by Team Accuracy."
+]
+
+
+start_time = 0
+test_sentence = ""
+
+def start_test():
+    global start_time, test_sentence
+    test_sentence = random.choice(sentences)
+    sentence_label.config(text=test_sentence)
+    typing_entry.delete(0, tk.END)
+    typing_entry.config(state=tk.NORMAL)
+    typing_entry.focus()
+    start_time = time.time()
+    result_label.config(text="")  
+
+def check_result():
+    global start_time, test_sentence
+    end_time = time.time()
+    typed = typing_entry.get()
+    total_time = round(end_time - start_time, 2)
+
+    
+    original_words = test_sentence.split()
+    typed_words = typed.split()
+
+    correct_words = sum(1 for i in range(min(len(original_words), len(typed_words))) if original_words[i] == typed_words[i])
+
+    accuracy = (correct_words / len(original_words)) * 100
+    wpm = (len(typed_words) / total_time) * 60 if total_time > 0 else 0
+
+    result_label.config(text=f"Time Taken: {total_time} seconds\nTyping Speed: {wpm:.2f} WPM\nAccuracy: {accuracy:.2f}%")
+
+
+root = tk.Tk()
+root.title("Speed & Accuracy Test")
+root.geometry("700x300")
+root.configure(bg="black")
+
+title_label = tk.Label(root, text="Typing Speed & Accuracy Test", font=("Arial", 18))
+title_label.pack(pady=10)
+
+sentence_label = tk.Label(root, text="Click 'Start Test' to begin", font=("Arial", 14), wraplength=650)
+sentence_label.pack(pady=10)
+
+typing_entry = tk.Entry(root, font=("Arial", 14), width=80, state=tk.DISABLED)
+typing_entry.pack(pady=10)
+
+start_button = tk.Button(root, text="Start Test", font=("Arial", 14), command=start_test)
+start_button.pack(pady=5)
+
+check_button = tk.Button(root, text="Check Result", font=("Arial", 14), command=check_result)
+check_button.pack(pady=5)
+
+result_label = tk.Label(root, text="", font=("Arial", 14))
+result_label.pack(pady=10)
+
+root.mainloop()
